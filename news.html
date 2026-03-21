@@ -6,68 +6,60 @@
     <title>お知らせ - CRESTA-AUTO</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* cars.html と共通のヘッダー・全体の整合性 */
+        /* レイアウト調整 */
         #news-list-container {
             display: flex;
             flex-direction: column;
             gap: 20px;
             padding: 20px;
             align-items: center;
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
-        /* お知らせカード (cars.htmlのカード構成をベースに) */
         .news-card {
-            width: 800px; /* バランスを見て広めに設定 */
+            width: 100%;
+            max-width: 800px;
             background-color: #fff;
-            display: flex;
-            flex-direction: column;
             padding: 25px;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            border-left: 8px solid #ff00ff; /* お知らせのアクセントカラー */
+            border-left: 8px solid #ff00ff; /* お知らせアクセント */
+            box-sizing: border-box;
         }
 
         .news-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #eee;
             margin-bottom: 15px;
             padding-bottom: 10px;
         }
 
         .news-title {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             margin: 0;
             color: #333;
-            max-width: 70%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-weight: bold;
         }
 
         .news-date {
             font-size: 0.9rem;
-            color: #888;
-            font-weight: bold;
+            color: #999;
         }
 
         .news-content {
             font-size: 1rem;
             line-height: 1.8;
             color: #555;
-            white-space: pre-wrap; /* 改行を有効に */
+            white-space: pre-wrap; /* 改行反映 */
         }
 
         .loading-message {
             text-align: center;
             padding: 50px;
             color: #999;
-        }
-
-        /* レスポンシブ対応 */
-        @media (max-width: 850px) {
-            .news-card { width: 90%; }
         }
     </style>
 </head>
@@ -91,13 +83,13 @@
     </main>
 
     <script>
-        // デプロイしたGASのURLを貼り付けてください
+        // デプロイしたGASのURL（末尾が /exec のもの）
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzCohegTqgSW7R5t8Oxr_eFw7bB4zjNEVW4vy3vNYFDsGCiWJnBeMtHXAQOqEEasoZt/exec"; 
 
         async function fetchNews() {
             const container = document.getElementById('news-list-container');
             try {
-                // action=getNews を付けてリクエスト
+                // Code.gs内の doGet(e) で分岐させるために ?action=getNews を付与
                 const response = await fetch(`${GAS_API_URL}?action=getNews`);
                 const newsData = await response.json();
                 
@@ -108,23 +100,22 @@
 
                 container.innerHTML = '';
 
-                // スプレッドシートの項目名（日付, タイトル, 内容）に合わせて表示
-                // 新しい順にする場合は reverse() を入れる
-                newsData.reverse().forEach(item => {
+                // Code.gsの getNewsData() が返している英単語のキーを使用
+                newsData.forEach(item => {
                     const card = `
                         <article class="news-card">
                             <div class="news-header">
-                                <h2 class="news-title">${item.タイトル || '無題のお知らせ'}</h2>
-                                <time class="news-date">${item.日付 || ''}</time>
+                                <h2 class="news-title">${item.title || '無題のお知らせ'}</h2>
+                                <time class="news-date">${item.date || ''}</time>
                             </div>
-                            <div class="news-content">${item.内容 || ''}</div>
+                            <div class="news-content">${item.content || ''}</div>
                         </article>
                     `;
                     container.innerHTML += card;
                 });
 
             } catch (error) {
-                console.error(error);
+                console.error("Fetch error:", error);
                 document.getElementById('loading-message').innerText = "お知らせの読み込みに失敗しました。";
             }
         }
