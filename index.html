@@ -27,6 +27,8 @@
         .delay-1 { animation-delay: 0.2s; }
         .delay-2 { animation-delay: 0.5s; }
         .delay-3 { animation-delay: 0.8s; }
+        /* 画像用にさらに少し遅らせる設定 */
+        .delay-img { animation-delay: 1.0s; }
 
         /* --- 追加のホーム専用スタイル --- */
         #hero {
@@ -222,15 +224,15 @@
             <div class="scroll-down fade-in delay-1">▼</div>
         </section>
 
-        <section class="concept-section fade-in delay-2">
+        <section class="concept-section">
             <div class="concept-grid">
-                <div class="concept-text">
+                <div class="concept-text fade-in delay-2">
                     <h2>イタリアの<br>自動車ブランド</h2>
                     <p>
                         私達CRESTAは、2024年4月1日に創業したメーカーです。
                     </p>
                 </div>
-                <div class="concept-image">
+                <div class="concept-image fade-in delay-img">
                     <img src="https://lh3.googleusercontent.com/d/1fuHpv5A8mRXWmYR3SW5eBVgYP-SklU26" alt="icon">
                 </div>
             </div>
@@ -244,7 +246,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 CRESTA-AUTO</p>
+        <p>© 2026 CRESTA-AUTO</p>
     </footer>
 
 </body>
