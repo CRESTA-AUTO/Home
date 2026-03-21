@@ -6,94 +6,205 @@
     <title>車両一覧 - CRESTA-AUTO</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* CSSが読み込めない場合でも最低限綺麗に見えるように追加 */
-        #car-list-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            padding: 20px;
-            justify-content: center;
-        }
-
-        .controls {
-            background-color: #f4f4f4;
-            padding: 15px;
-            margin: 20px;
-            border-radius: 8px;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .controls-group {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .controls button {
-            padding: 8px 12px;
-            border: 1px solid #ccc;
-            background: white;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        .controls button.active {
-            background: #333;
-            color: white;
-        }
-
-        /* 価格のCR部分の装飾 */
-        .currency-label {
-            font-weight: bold;
-            margin-left: 4px;
-            color: #555;
-        }
-
-        /* --- cars.html の <style> 内に貼り付けてください --- */
-
-/* 車両カード全体のレイアウトを安定させる */
-.car-card {
-    /* もし style.css で設定されていなければ、念のため幅を固定 */
-    width: 600px; /* 画像の構成から、これくらいが適当です */
-    display: flex; /* 画像と詳細を横並びに */
-    align-items: center; /* 垂直方向を中央揃え */
-    overflow: hidden; /* カードからはみ出た要素を隠す */
+/* --- 全体設定 --- */
+body {
+    background-color: #121212; /* 黒背景 */
+    color: #eeeeee;
+    margin: 0;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-/* 車名のテキストを制御する */
-.car-name {
-    /* 1行に収めるための最強の組み合わせ */
-    white-space: nowrap;      /* 改行させない */
-    overflow: hidden;        /* はみ出した分を隠す */
-    text-overflow: ellipsis; /* はみ出した分を「...」にする */
-    
-    /* 文字の大きさを安定させる（任意で調整してください） */
+/* --- ヘッダーの調整 --- */
+header {
+    background-color: #1a1a1a;
+    border-bottom: 1px solid #333;
+    padding: 10px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    color: #ffffff;
+    font-weight: bold;
     font-size: 1.5rem;
-    margin-bottom: 5px;
-    
-    /* テキストエリアの幅を固定して、省略が機能するようにする */
-    max-width: 350px; /* 右側のテキストエリアの幅に合わせて調整 */
 }
 
-/* 画像の大きさも念のため固定 */
+nav a {
+    color: #cccccc;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+nav a:hover, nav a.active {
+    color: #00ff99;
+    border-bottom: 2px solid #00ff99;
+}
+
+.btn-booking {
+    background-color: transparent;
+    color: #00ff99;
+    border: 1px solid #00ff99;
+    padding: 8px 15px;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: 0.3s;
+}
+
+.btn-booking:hover {
+    background-color: #00ff99;
+    color: #000;
+}
+
+/* --- 絞り込み・並べ替えエリア --- */
+.controls {
+    background-color: #1e1e1e;
+    padding: 15px;
+    margin: 20px auto;
+    max-width: 960px;
+    border-radius: 8px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: center;
+    border: 1px solid #333;
+}
+
+.controls label {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.controls button {
+    padding: 8px 16px;
+    border: 1px solid #444;
+    background: #252525;
+    color: #aaa;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: 0.2s;
+}
+
+.controls button:hover {
+    border-color: #00ff99;
+    color: #00ff99;
+}
+
+.controls button.active {
+    background: #00ff99;
+    color: #000;
+    border-color: #00ff99;
+    font-weight: bold;
+}
+
+/* --- 車両リスト・カード --- */
+#car-list-container {
+    display: flex;
+    flex-direction: column; /* 横並びではなく縦に並べる（Jimdo/公式風） */
+    align-items: center;
+    gap: 30px;
+    padding: 20px;
+}
+
+.car-card {
+    width: 100%;
+    max-width: 800px; /* カードの最大幅 */
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #333;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    transition: transform 0.3s ease;
+}
+
+.car-card:hover {
+    transform: translateY(-5px);
+    border-color: #00ff99;
+}
+
 .car-image {
-    width: 200px;
-    height: 120px; /* アスペクト比に合わせて調整 */
-    object-fit: contain; /* 画像を押しつぶさずに収める */
-    border: 2px solid #000;
-    margin-right: 20px; /* 画像とテキストの間隔 */
+    width: 320px; /* 画像サイズ固定 */
+    height: 180px;
+    object-fit: contain;
+    background-color: #000;
+    border: 1px solid #444;
+    border-radius: 4px;
+    margin-right: 30px;
 }
 
-/* 右側の詳細エリアを安定させる */
 .car-details {
-    flex: 1; /* 残りの幅をすべて使う */
+    flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: flex-start; /* 左寄せ */
+    align-items: flex-start;
+}
+
+.car-name {
+    font-size: 1.8rem;
+    color: #ffffff;
+    margin: 0 0 10px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 400px;
+}
+
+.car-price {
+    font-size: 1.2rem;
+    color: #00ff99; /* 価格をネオングリーンに */
+    margin-bottom: 5px;
+}
+
+.currency-label {
+    font-size: 0.9rem;
+    margin-left: 5px;
+    color: #00ff99;
+}
+
+.car-spec {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.car-status {
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.status-onsale {
+    color: #00ff99;
+}
+
+.status-sold {
+    color: #ff4444;
+}
+
+.btn-buy {
+    background-color: #00ff99;
+    color: #000;
+    padding: 10px 25px;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 4px;
+    display: inline-block;
+    transition: 0.3s;
+}
+
+.btn-buy:hover {
+    background-color: #ffffff;
+    box-shadow: 0 0 15px #00ff99;
+}
+
+.btn-buy.disabled {
+    background-color: #333;
+    color: #666;
+    cursor: not-allowed;
+    pointer-events: none;
 }
     </style>
 </head>
@@ -107,7 +218,7 @@
                 <li><a href="news.html">お知らせ</a></li>
             </ul>
         </nav>
-        <a href="${car.購入リンク}" class="btn-booking">予約する</a>
+<a href="https://docs.google.com/forms/d/1zPGI6HD4iRVSvvlWbTxiSdbSgxjjRqCrUDru-jT1QO8/viewform" class="btn-booking">予約する</a>
     </header>
 
     <main>
