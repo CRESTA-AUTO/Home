@@ -38,8 +38,8 @@
     align-items: center;
     text-align: center;
     position: relative;
-    overflow: hidden; /* はみ出し防止 */
-    background: black; /* 背景が浮き上がる前の土台の色 */
+    overflow: hidden;
+    background: #000; /* 画像が出る前の土台を真っ黒に固定 */
 }
 
 /* 背景画像専用のレイヤー */
@@ -54,11 +54,12 @@
                 url('https://lh3.googleusercontent.com/u/0/d/1_tVPXHm7yXAAd2RhBuBb5yv9HYkSxuy-');
     background-size: cover;
     background-position: center;
-    z-index: 0; /* 背面に配置 */
+    z-index: 0;
     
     /* アニメーション設定 */
     opacity: 0;
-    animation: heroFade 2.0s ease-in-out forwards;
+    /* 2.0s(表示時間) の後の 0.8s が「待ち時間」です */
+    animation: heroFade 2.0s ease-in-out 0.8s forwards;
 }
 
 /* 文字コンテンツを背景より前に出す */
@@ -67,9 +68,20 @@
     z-index: 1;
 }
 
+/* ヘッダーが背景に隠れるのを防ぐ */
+header {
+    z-index: 10;
+}
+
 @keyframes heroFade {
-    0% { opacity: 0; transform: scale(1.1); } /* 少し大きくしてボカす演出 */
-    100% { opacity: 1; transform: scale(1); }
+    0% { 
+        opacity: 0; 
+        transform: scale(1.15); /* 最初は少し大きく */
+    }
+    100% { 
+        opacity: 1; 
+        transform: scale(1);    /* じわっと標準サイズへ */
+    }
 }
         .hero-content h1 {
             font-size: 3.5rem;
