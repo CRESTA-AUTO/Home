@@ -32,14 +32,16 @@
 
         /* --- 追加のホーム専用スタイル --- */
 #hero {
+    /* スマホでの高さ不足を防ぐため、最低限の高さ(px)を指定 */
     height: 80vh;
+    min-height: 500px; 
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     position: relative;
     overflow: hidden;
-    background: #000; /* 画像が出る前の土台を真っ黒に固定 */
+    background: #000;
 }
 
 /* 背景画像専用のレイヤー */
@@ -50,37 +52,47 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                url('https://lh3.googleusercontent.com/u/0/d/1_tVPXHm7yXAAd2RhBuBb5yv9HYkSxuy-');
+    /* スマホでも確実に読み込めるよう、背景画像を再指定 */
+    background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                      url('https://lh3.googleusercontent.com/u/0/d/1_tVPXHm7yXAAd2RhBuBb5yv9HYkSxuy-');
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
     z-index: 0;
     
     /* アニメーション設定 */
     opacity: 0;
-    /* 2.0s(表示時間) の後の 0.8s が「待ち時間」です */
-    animation: heroFade 1.0s ease-in-out 0.8s forwards;
+    /* 待ち時間を 0.5s に少し短縮して、スマホでの「真っ黒時間」を減らす */
+    animation: heroFade 1.0s ease-in-out 0.5s forwards;
 }
 
-/* 文字コンテンツを背景より前に出す */
+/* 文字コンテンツ */
 .hero-content {
     position: relative;
-    z-index: 1;
+    z-index: 2; /* 確実に一番上に */
+    width: 90%; /* スマホで文字が端に寄りすぎないよう調整 */
 }
 
-/* ヘッダーが背景に隠れるのを防ぐ */
-header {
-    z-index: 10;
+/* 魔法のレスポンシブ（スマホ用微調整） */
+@media screen and (max-width: 768px) {
+    #hero {
+        height: 60vh; /* スマホでは少し高さを抑えるとバランスが良い */
+        min-height: 400px;
+    }
+    
+    .hero-content h1 {
+        font-size: 2rem !important; /* スマホでは文字を小さくして一行に収める */
+    }
 }
 
 @keyframes heroFade {
     0% { 
         opacity: 0; 
-        transform: scale(1.15); /* 最初は少し大きく */
+        transform: scale(1.1); 
     }
     100% { 
         opacity: 1; 
-        transform: scale(1);    /* じわっと標準サイズへ */
+        transform: scale(1); 
     }
 }
         .hero-content h1 {
