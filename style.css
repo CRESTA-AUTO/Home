@@ -1,223 +1,79 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>車両一覧 - CRESTA-AUTO</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        /* 追加：並べ替えコントローラーのスタイル */
-        .controls {
-            background-color: #f4f4f4;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .controls label {
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-        .controls button {
-            padding: 8px 15px;
-            border: 1px solid #ccc;
-            background-color: white;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: all 0.3s;
-        }
-        .controls button:hover {
-            background-color: #e0e0e0;
-        }
-        .controls button.active {
-            background-color: #333;
-            color: white;
-            border-color: #333;
-        }
-        .controls-group {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <div class="logo">CRESTA-AUTO</div>
-        <nav>
-            <ul>
-                <li><a href="index.html">ホーム</a></li>
-                <li><a href="cars.html" class="active">車両一覧</a></li>
-            </ul>
-        </nav>
-        <a href="#booking" class="btn-booking">予約する</a>
-    </header>
+/* Cresta Auto Style */
+body {
+    margin: 0;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #f4f4f4; /* 車両一覧の背景色 */
+    color: #333;
+}
 
-    <main>
-        <div class="controls">
-            <div class="controls-group">
-                <label>絞り込み:</label>
-                <button id="filter-all" class="active" onclick="setFilter('all')">すべて</button>
-                <button id="filter-onsale" onclick="setFilter('onsale')">販売中のみ</button>
-            </div>
-            <div class="controls-group">
-                <label>並べ替え:</label>
-                <button id="sort-new" class="active" onclick="setSort('new')">新しい順</button>
-                <button id="sort-old" onclick="setSort('old')">古い順</button>
-                <button id="sort-price-high" onclick="setSort('price-high')">価格が高い順</button>
-                <button id="sort-price-low" onclick="setSort('price-low')">価格が低い順</button>
-            </div>
-        </div>
+/* ヘッダー */
+header {
+    background-color: #fff;
+    padding: 10px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+}
+.logo { font-size: 1.5rem; font-weight: bold; }
+nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 20px; }
+nav a { text-decoration: none; color: #333; font-size: 0.9rem; }
+nav a.active { border-bottom: 2px solid #333; padding-bottom: 5px; }
+.btn-booking { background-color: #000; color: #fff; padding: 8px 15px; text-decoration: none; border-radius: 4px; }
 
-        <div id="car-list-container">
-            <p id="loading-message">車両データを読み込み中です...</p>
-        </div>
-    </main>
+/* ホーム (Jimdo風) */
+#hero {
+    background-color: #000; /* 黒背景 */
+    color: #fff;
+    height: 80vh; /* 画像のように画面いっぱいに */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+}
+.hero-content h1 { font-size: 3rem; margin-bottom: 10px; }
+.cyan-box { width: 50px; height: 10px; background-color: #00ffff; margin: 0 auto 20px auto; } /* 画像の水色ボックス */
+.btn-main { background-color: #00ffff; color: #000; padding: 10px 20px; text-decoration: none; font-weight: bold; border-radius: 4px; }
+.scroll-down { position: absolute; bottom: 20px; width: 100%; color: #fff; }
 
-    <script>
-        // --- 設定エリア ---
-        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzCohegTqgSW7R5t8Oxr_eFw7bB4zjNEVW4vy3vNYFDsGCiWJnBeMtHXAQOqEEasoZt/exec"; 
-        // ------------------
+/* 車両一覧 (動的エリア用CSS) */
+#car-list-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+.car-card {
+    background-color: #fff;
+    margin-bottom: 40px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex; /* 画像と文章を横並びにするなら */
+    gap: 20px;
+}
+.car-image { width: 400px; height: auto; border-radius: 4px; } /* 画像にあるALPENの画像のサイズ感 */
+.car-details { flex: 1; text-align: center;} /* 文章は中央揃え */
+.car-name { font-size: 1.8rem; margin-bottom: 10px; }
+.car-desc { font-size: 1.1rem; color: #666; margin-bottom: 5px; }
+.car-spec { font-size: 0.8rem; color: #999; margin-bottom: 20px; white-space: pre-wrap;} /* スペック */
 
-        let allCars = []; // 全データを保持する配列
-        let currentSort = 'new'; // 初期ソート
-        let currentFilter = 'all'; // 初期フィルター
+.car-status { font-weight: bold; margin-bottom: 10px;}
+.status-sold { color: red; } /* 販売終了 */
+.status-onsale { color: cyan; } /* 販売中 */
 
-        async function fetchCars() {
-            try {
-                const response = await fetch(GAS_API_URL);
-                if (!response.ok) throw new Error("データの取得に失敗しました");
-                const cars = await response.json();
-                
-                // 価格を数値に変換して保持（ソート用）
-                allCars = cars.map(car => ({
-                    ...car,
-                    // "1,200" のようなカンマを除去して数値にする。数値以外なら0
-                    priceValue: parseFloat(String(car.価格).replace(/,/g, '')) || 0,
-                    // 登録順用のID（配列のインデックスを使用）
-                    originalIndex: cars.indexOf(car)
-                }));
-
-                applyControls(); // 初期表示
-            } catch (error) {
-                console.error(error);
-                document.getElementById('loading-message').innerText = "エラー：車両データを読み込めませんでした。";
-            }
-        }
-
-        // 画像URLをどんな形式からでも「lh3.../d/」に変換する関数
-        function optimizeImageUrl(rawData) {
-            if (!rawData) return "https://placehold.jp/24/cccccc/ffffff/400x250.png?text=No%20Image";
-
-            // URLの中から「ID」らしき英数字（25文字以上）を抜き出す
-            const idMatch = rawData.match(/[-\w]{25,}/);
-            const fileId = idMatch ? idMatch[0] : null;
-
-            if (fileId) {
-                // 【最強の表示ルート】に強制変換
-                return `https://lh3.googleusercontent.com/d/${fileId}`;
-            } else {
-                // IDが抜けない場合はそのまま使う（外部URLなどの想定）
-                return rawData;
-            }
-        }
-
-        // コントロール（ソート・フィルター）の状態をボタンに反映し、再描画する
-        function applyControls() {
-            // ボタンのスタイル更新
-            document.querySelectorAll('.controls button').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`sort-${currentSort}`).classList.add('active');
-            document.getElementById(`filter-${currentFilter}`).classList.add('active');
-
-            // データの処理
-            let displayCars = [...allCars];
-
-            // 1. フィルター（絞り込み）
-            if (currentFilter === 'onsale') {
-                displayCars = displayCars.filter(car => car.販売状況 === '販売中');
-            }
-
-            // 2. ソート（並べ替え）
-            switch (currentSort) {
-                case 'new': // 新しい順（スプレッドシートの下の方）
-                    displayCars.sort((a, b) => b.originalIndex - a.originalIndex);
-                    break;
-                case 'old': // 古い順（スプレッドシートの上の方）
-                    displayCars.sort((a, b) => a.originalIndex - b.originalIndex);
-                    break;
-                case 'price-high': // 価格が高い順
-                    displayCars.sort((a, b) => b.priceValue - a.priceValue);
-                    break;
-                case 'price-low': // 価格が低い順
-                    displayCars.sort((a, b) => a.priceValue - b.priceValue);
-                    break;
-            }
-
-            renderCars(displayCars);
-        }
-
-        // 並べ替えを変更
-        function setSort(sortType) {
-            currentSort = sortType;
-            applyControls();
-        }
-
-        // 絞り込みを変更
-        function setFilter(filterType) {
-            currentFilter = filterType;
-            applyControls();
-        }
-
-        function renderCars(cars) {
-            const container = document.getElementById('car-list-container');
-            container.innerHTML = ''; 
-            
-            if (cars.length === 0) {
-                container.innerHTML = '<p style="text-align:center; padding:20px;">該当する車両がありません。</p>';
-                return;
-            }
-
-            cars.forEach(car => {
-                // どんなリンクでも最適化する
-                const imageUrl = optimizeImageUrl(car.画像URL || car.画像ID);
-                
-                let statusHtml = '';
-                let buyButtonHtml = '';
-                
-                if (car.販売状況 === '販売中') {
-                    statusHtml = `<span class="car-status status-onsale">【販売中】</span>`;
-                    buyButtonHtml = `<a href="${car.購入リンク}" class="btn-buy" target="_blank">買う</a>`;
-                } else if (car.販売状況 === '販売終了') {
-                    statusHtml = `<span class="car-status status-sold">【販売終了】</span>`;
-                    buyButtonHtml = `<span class="btn-buy disabled">購入不可</span>`;
-                }
-
-                // 備考の「あ」などのテストデータを表示しない工夫（任意）
-                const remarks = (car.備考 === 'あ' || !car.備考) ? '' : car.備考;
-
-                const carCardHtml = `
-                    <div class="car-card">
-                        <img src="${imageUrl}" alt="${car.車名}" class="car-image" onerror="this.src='https://placehold.jp/24/cccccc/ffffff/400x250.png?text=Image%20Error'">
-                        <div class="car-details">
-                            <h2 class="car-name">${car.車名}</h2>
-                            <p class="car-price">価格: ${car.価格} <span style="font-size:0.8em;">CR</span></p>
-                            <p class="car-spec" style="white-space: pre-wrap;">${remarks}</p>
-                            <div class="purchase-area">
-                                ${statusHtml}<br>
-                                ${buyButtonHtml}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                container.innerHTML += carCardHtml;
-            });
-        }
-
-        fetchCars();
-    </script>
-</body>
-</html>
+.btn-buy { 
+    background-color: #00ffff; 
+    color: #000; 
+    padding: 10px 30px; 
+    text-decoration: none; 
+    font-weight: bold; 
+    border-radius: 4px; 
+    display: inline-block;
+}
+.btn-buy.disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    pointer-events: none; /* クリック不可に */
+}
