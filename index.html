@@ -18,6 +18,17 @@
             }
         }
 
+        @keyframes heroFade {
+            0% { 
+                opacity: 0; 
+                transform: scale(1.1); 
+            }
+            100% { 
+                opacity: 1; 
+                transform: scale(1); 
+            }
+        }
+
         .fade-in {
             opacity: 0; /* 最初は隠す */
             animation: fadeInUp 0.8s ease-out forwards;
@@ -27,89 +38,49 @@
         .delay-1 { animation-delay: 0.2s; }
         .delay-2 { animation-delay: 0.5s; }
         .delay-3 { animation-delay: 0.8s; }
-        /* 画像用にさらに少し遅らせる設定 */
         .delay-img { animation-delay: 1.0s; }
 
-        /* --- 追加のホーム専用スタイル --- */
-<section id="hero">
-    <div class="hero-bg"></div> <div class="hero-content fade-in delay-1">
-        <h1>ようこそ<br>CRESTA-AUTOへ</h1>
-        <div class="cyan-box"></div>
-        <p style="margin-bottom: 30px; color: #aaa;">Car Parking Original Car Shop</p>
-        <a href="cars.html" class="btn-main">車両を見る</a>
-    </div>
-    <div class="scroll-down fade-in delay-1">▼</div>
-</section>
+        /* --- ヒーロー・背景設定 --- */
+        #hero {
+            height: 80vh;
+            min-height: 500px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
 
-<style>
-/* --- 修正版：背景フェード用スタイル --- */
-#hero {
-    height: 80vh;
-    min-height: 500px; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    background: #000; /* 画像が出る前は真っ黒 */
-}
+        /* スマホ・PC共通：実体としての背景レイヤー */
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                              url('https://lh3.googleusercontent.com/u/0/d/1_tVPXHm7yXAAd2RhBuBb5yv9HYkSxuy-');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 1;
+            opacity: 0;
+            animation: heroFade 1.5s ease-in-out 0.8s forwards;
+            will-change: opacity, transform;
+        }
 
-/* 擬似要素(::before)をやめて、直接のクラスに変更 */
-.hero-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* 背景画像を確実に指定 */
-    background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                      url('https://lh3.googleusercontent.com/u/0/d/1_tVPXHm7yXAAd2RhBuBb5yv9HYkSxuy-');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: 1; /* コンテンツの下 */
-    
-    /* スマホでも確実に動かすための設定 */
-    opacity: 0;
-    animation: heroFade 1.5s ease-in-out 0.8s forwards; /* 0.8s待ってから開始 */
-    will-change: opacity, transform; /* ブラウザに「動くぞ」と予告して加速させる */
-}
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            width: 90%;
+        }
 
-/* 文字コンテンツ */
-.hero-content {
-    position: relative;
-    z-index: 2; /* 背景より上に配置 */
-    width: 90%;
-}
+        header {
+            z-index: 100 !important;
+        }
 
-@keyframes heroFade {
-    0% { 
-        opacity: 0; 
-        transform: scale(1.1); 
-    }
-    100% { 
-        opacity: 1; 
-        transform: scale(1); 
-    }
-}
-
-/* ヘッダーは常に最前面 */
-header {
-    z-index: 100 !important;
-}
-
-/* 魔法のレスポンシブ */
-@media screen and (max-width: 768px) {
-    #hero {
-        height: 70vh; /* スマホで見やすい高さに微調整 */
-        min-height: 400px;
-    }
-    .hero-content h1 {
-        font-size: 2rem !important;
-    }
-}
-</style>
         .hero-content h1 {
             font-size: 3.5rem;
             margin-bottom: 10px;
@@ -185,84 +156,86 @@ header {
             border-top: 1px solid #222;
         }
 
-/* --- 魔法のレスポンシブ・ポン付けコード --- */
-@media screen and (max-width: 768px) {
-    /* 1. ヘッダー：重なりを防ぐために縦に並べる */
-    header {
-        padding: 10px !important;
-        flex-direction: column !important;
-        height: auto !important;
-        gap: 10px !important;
-    }
+        /* --- 魔法のレスポンシブ --- */
+        @media screen and (max-width: 768px) {
+            header {
+                padding: 10px !important;
+                flex-direction: column !important;
+                height: auto !important;
+                gap: 10px !important;
+            }
 
-    nav ul {
-        justify-content: center !important;
-        gap: 15px !important;
-        padding: 0 !important;
-    }
+            nav ul {
+                justify-content: center !important;
+                gap: 15px !important;
+                padding: 0 !important;
+            }
 
-    nav a {
-        font-size: 14px !important;
-        padding-bottom: 5px !important;
-    }
+            nav a {
+                font-size: 14px !important;
+                padding-bottom: 5px !important;
+            }
 
-    /* 予約ボタンをスマホで見やすく */
-    .btn-booking {
-        width: 100% !important;
-        text-align: center !important;
-        box-sizing: border-box !important;
-    }
+            .btn-booking {
+                width: 100% !important;
+                text-align: center !important;
+                box-sizing: border-box !important;
+            }
 
-    /* 2. 車両一覧：カードを縦並びに強制変更 */
-    .car-card {
-        flex-direction: column !important; /* 横並びから縦並びへ */
-        width: 95% !important;
-        max-width: 400px !important;
-        height: auto !important;
-        margin: 10px auto !important;
-        padding: 15px !important;
-        align-items: center !important;
-    }
+            .car-card {
+                flex-direction: column !important;
+                width: 95% !important;
+                max-width: 400px !important;
+                height: auto !important;
+                margin: 10px auto !important;
+                padding: 15px !important;
+                align-items: center !important;
+            }
 
-    .car-image {
-        width: 100% !important;
-        height: auto !important;
-        margin: 0 0 15px 0 !important; /* 右余白を消して下に余白 */
-    }
+            .car-image {
+                width: 100% !important;
+                height: auto !important;
+                margin: 0 0 15px 0 !important;
+            }
 
-    .car-details {
-        width: 100% !important;
-        text-align: center !important;
-        align-items: center !important;
-    }
+            .car-details {
+                width: 100% !important;
+                text-align: center !important;
+                align-items: center !important;
+            }
 
-    /* 文字のはみ出しを防止 */
-    .car-name {
-        max-width: 100% !important;
-        white-space: normal !important; /* 折り返しを許可 */
-        font-size: 1.2rem !important;
-    }
+            .car-name {
+                max-width: 100% !important;
+                white-space: normal !important;
+                font-size: 1.2rem !important;
+            }
 
-    .car-spec {
-        text-align: left !important; /* スペックは左寄せが読みやすい */
-        font-size: 13px !important;
-        width: 100% !important;
-    }
+            .car-spec {
+                text-align: left !important;
+                font-size: 13px !important;
+                width: 100% !important;
+            }
 
-    /* 3. コントロールボタンの調整 */
-    .controls {
-        flex-direction: column !important;
-        gap: 10px !important;
-        margin: 10px !important;
-    }
-    
-    .controls-group {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        justify-content: center !important;
-    }
-}
-        
+            .controls {
+                flex-direction: column !important;
+                gap: 10px !important;
+                margin: 10px !important;
+            }
+            
+            .controls-group {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+            }
+
+            #hero {
+                height: 70vh; 
+                min-height: 400px;
+            }
+            .hero-content h1 {
+                font-size: 2rem !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -281,6 +254,8 @@ header {
 
     <main>
         <section id="hero">
+            <div class="hero-bg"></div>
+
             <div class="hero-content fade-in delay-1">
                 <h1>ようこそ<br>CRESTA-AUTOへ</h1>
                 <div class="cyan-box"></div>
