@@ -51,6 +51,50 @@
             margin-left: 4px;
             color: #555;
         }
+
+        /* --- cars.html の <style> 内に貼り付けてください --- */
+
+/* 車両カード全体のレイアウトを安定させる */
+.car-card {
+    /* もし style.css で設定されていなければ、念のため幅を固定 */
+    width: 600px; /* 画像の構成から、これくらいが適当です */
+    display: flex; /* 画像と詳細を横並びに */
+    align-items: center; /* 垂直方向を中央揃え */
+    overflow: hidden; /* カードからはみ出た要素を隠す */
+}
+
+/* 車名のテキストを制御する */
+.car-name {
+    /* 1行に収めるための最強の組み合わせ */
+    white-space: nowrap;      /* 改行させない */
+    overflow: hidden;        /* はみ出した分を隠す */
+    text-overflow: ellipsis; /* はみ出した分を「...」にする */
+    
+    /* 文字の大きさを安定させる（任意で調整してください） */
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    
+    /* テキストエリアの幅を固定して、省略が機能するようにする */
+    max-width: 350px; /* 右側のテキストエリアの幅に合わせて調整 */
+}
+
+/* 画像の大きさも念のため固定 */
+.car-image {
+    width: 200px;
+    height: 120px; /* アスペクト比に合わせて調整 */
+    object-fit: contain; /* 画像を押しつぶさずに収める */
+    border: 2px solid #000;
+    margin-right: 20px; /* 画像とテキストの間隔 */
+}
+
+/* 右側の詳細エリアを安定させる */
+.car-details {
+    flex: 1; /* 残りの幅をすべて使う */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start; /* 左寄せ */
+}
     </style>
 </head>
 <body>
