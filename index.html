@@ -31,28 +31,46 @@
         .delay-img { animation-delay: 1.0s; }
 
         /* --- 追加のホーム専用スタイル --- */
-/* --- 背景画像用のフェードアニメーション --- */
-@keyframes heroFade {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
 #hero {
-    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                url('https://lh3.googleusercontent.com/u/0/d/1_tVPXHm7yXAAd2RhBuBb5yv9HYkSxuy-');
-    background-size: cover;
-    background-position: center;
     height: 80vh;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     position: relative;
-    
-    /* ここでアニメーションを適用 */
-    animation: heroFade 1.5s ease-in-out forwards;
+    overflow: hidden; /* はみ出し防止 */
+    background: black; /* 背景が浮き上がる前の土台の色 */
 }
 
+/* 背景画像専用のレイヤー */
+#hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                url('https://lh3.googleusercontent.com/u/0/d/1_tVPXHm7yXAAd2RhBuBb5yv9HYkSxuy-');
+    background-size: cover;
+    background-position: center;
+    z-index: 0; /* 背面に配置 */
+    
+    /* アニメーション設定 */
+    opacity: 0;
+    animation: heroFade 2.0s ease-in-out forwards;
+}
+
+/* 文字コンテンツを背景より前に出す */
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes heroFade {
+    0% { opacity: 0; transform: scale(1.1); } /* 少し大きくしてボカす演出 */
+    100% { opacity: 1; transform: scale(1); }
+}
         .hero-content h1 {
             font-size: 3.5rem;
             margin-bottom: 10px;
