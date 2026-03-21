@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>車両一覧 - CRESTA_AUTO</title>
+    <title>車両一覧 - CRESTA-AUTO</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <div class="logo">CRESTA_AUTO</div>
+        <div class="logo">CRESTA-AUTO</div>
         <nav>
             <ul>
                 <li><a href="index.html">ホーム</a></li>
@@ -26,7 +26,6 @@
 
     <script>
         // --- 設定エリア ---
-        // デプロイしたウェブアプリのURL（末尾が /exec のもの）を使用してください
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzCohegTqgSW7R5t8Oxr_eFw7bB4zjNEVW4vy3vNYFDsGCiWJnBeMtHXAQOqEEasoZt/exec"; 
         // ------------------
 
@@ -47,20 +46,19 @@
             container.innerHTML = ''; 
             
             cars.forEach(car => {
-                // 画像IDを直リンクに変換（スプレッドシートの「画像ID」列を使用）
-                const imageUrl = car.画像ID ? `https://lh3.googleusercontent.com/d/${car.画像ID}` : "https://via.placeholder.com/400x250?text=No+Image";
+                // 【修正ポイント】スプレッドシートの「画像URL」列をそのまま使用する
+                // キー名が「画像URL」であることを確認してください。GASの書き出しに合わせます。
+                const imageUrl = car.画像URL || "https://via.placeholder.com/400x250?text=No+Image";
                 
                 let statusHtml = '';
                 let buyButtonHtml = '';
                 
-                // スプレッドシートの「販売状況」列を参照
                 if (car.販売状況 === '販売中') {
                     statusHtml = `<span class="car-status status-onsale">【販売中】</span>`;
-                    // GAS側で追加した共通の「購入リンク」を使用
                     buyButtonHtml = `<a href="${car.購入リンク}" class="btn-buy" target="_blank">買う</a>`;
                 } else if (car.販売状況 === '販売終了') {
                     statusHtml = `<span class="car-status status-sold">【販売終了】</span>`;
-                    buyButtonHtml = `<span class="btn-buy disabled">売約済</span>`;
+                    buyButtonHtml = `<span class="btn-buy disabled">購入不可</span>`;
                 }
 
                 const carCardHtml = `
