@@ -3,20 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>News - Cresta Auto</title>
+    <title>お知らせ - CRESTA-AUTO</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* お知らせ専用の追加・上書きスタイル */
+        /* cars.html と共通のヘッダー・全体の整合性 */
         #news-list-container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+            align-items: center;
         }
 
+        /* お知らせカード (cars.htmlのカード構成をベースに) */
         .news-card {
+            width: 800px; /* バランスを見て広めに設定 */
             background-color: #fff;
-            margin-bottom: 20px;
-            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            padding: 25px;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             border-left: 8px solid #ff00ff; /* お知らせのアクセントカラー */
@@ -25,94 +30,106 @@
         .news-header {
             display: flex;
             justify-content: space-between;
-            align-items: baseline;
-            border-bottom: 1px solid #eee;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
             margin-bottom: 15px;
             padding-bottom: 10px;
         }
 
-        .news-date {
-            font-size: 0.9rem;
-            color: #999;
-            font-weight: bold;
-        }
-
         .news-title {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             margin: 0;
             color: #333;
+            max-width: 70%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .news-date {
+            font-size: 0.9rem;
+            color: #888;
+            font-weight: bold;
         }
 
         .news-content {
             font-size: 1rem;
             line-height: 1.8;
             color: #555;
-            white-space: pre-wrap; /* 改行を反映 */
+            white-space: pre-wrap; /* 改行を有効に */
         }
 
-        .loading, .error, .no-data {
+        .loading-message {
             text-align: center;
             padding: 50px;
             color: #999;
         }
+
+        /* レスポンシブ対応 */
+        @media (max-width: 850px) {
+            .news-card { width: 90%; }
+        }
     </style>
 </head>
 <body>
-
-<header>
-    <div class="logo">CRESTA AUTO</div>
-    <nav>
-        <ul>
-                <li><a href="index.html" class="active">ホーム</a></li>
+    <header>
+        <div class="logo">CRESTA-AUTO</div>
+        <nav>
+            <ul>
+                <li><a href="index.html">ホーム</a></li>
                 <li><a href="cars.html">車両一覧</a></li>
                 <li><a href="news.html" class="active">お知らせ</a></li>
-        </ul>
-    </nav>
-</header>
+            </ul>
+        </nav>
+        <a href="index.html#contact" class="btn-booking">お問い合わせ</a>
+    </header>
 
-<main>
-    <div id="news-list-container">
-        <div class="loading">お知らせを読み込み中...</div>
-    </div>
-</main>
+    <main>
+        <div id="news-list-container">
+            <p id="loading-message" class="loading-message">お知らせを読み込み中です...</p>
+        </div>
+    </main>
 
-<script>
-    // ★デプロイしたGASのウェブアプリURLをここに貼り付けてください
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbzCohegTqgSW7R5t8Oxr_eFw7bB4zjNEVW4vy3vNYFDsGCiWJnBeMtHXAQOqEEasoZt/exec";
+    <script>
+        // デプロイしたGASのURLを貼り付けてください
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzCohegTqgSW7R5t8Oxr_eFw7bB4zjNEVW4vy3vNYFDsGCiWJnBeMtHXAQOqEEasoZt/exec"; 
 
-    async function fetchNews() {
-        const container = document.getElementById('news-list-container');
-        
-        try {
-            // GAS側に action=getNews を送ってデータを取得
-            const response = await fetch(`${GAS_URL}?action=getNews`);
-            const data = await response.json();
+        async function fetchNews() {
+            const container = document.getElementById('news-list-container');
+            try {
+                // action=getNews を付けてリクエスト
+                const response = await fetch(`${GAS_API_URL}?action=getNews`);
+                const newsData = await response.json();
+                
+                if (!newsData || newsData.length === 0) {
+                    container.innerHTML = '<p class="loading-message">現在お知らせはありません。</p>';
+                    return;
+                }
 
-            if (!data || data.length === 0) {
-                container.innerHTML = '<div class="no-data">現在、お知らせはありません。</div>';
-                return;
+                container.innerHTML = '';
+
+                // スプレッドシートの項目名（日付, タイトル, 内容）に合わせて表示
+                // 新しい順にする場合は reverse() を入れる
+                newsData.reverse().forEach(item => {
+                    const card = `
+                        <article class="news-card">
+                            <div class="news-header">
+                                <h2 class="news-title">${item.タイトル || '無題のお知らせ'}</h2>
+                                <time class="news-date">${item.日付 || ''}</time>
+                            </div>
+                            <div class="news-content">${item.内容 || ''}</div>
+                        </article>
+                    `;
+                    container.innerHTML += card;
+                });
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loading-message').innerText = "お知らせの読み込みに失敗しました。";
             }
-
-            // HTMLの組み立て
-            container.innerHTML = data.map(item => `
-                <article class="news-card">
-                    <div class="news-header">
-                        <h2 class="news-title">${item.title}</h2>
-                        <time class="news-date">${item.date}</time>
-                    </div>
-                    <div class="news-content">${item.content}</div>
-                </article>
-            `).join('');
-
-        } catch (error) {
-            console.error("News Load Error:", error);
-            container.innerHTML = '<div class="error">お知らせの読み込みに失敗しました。</div>';
         }
-    }
 
-    // 実行
-    fetchNews();
-</script>
-
+        fetchNews();
+    </script>
 </body>
 </html>
