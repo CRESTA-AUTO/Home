@@ -3,10 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRESTA-AUTO</title>
+    <title>CRESTA-AUTO | Official Home</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* --- アニメーション定義 --- */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            opacity: 0; /* 最初は隠す */
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        /* --- セクションごとの遅延設定 --- */
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.5s; }
+        .delay-3 { animation-delay: 0.8s; }
+
+        /* --- 追加のホーム専用スタイル --- */
+        #hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://lh3.googleusercontent.com/u/0/d/1_tVPXHm7yXAAd2RhBuBb5yv9HYkSxuy-'); /* 背景画像 */
+            background-size: cover;
+            background-position: center;
+            height: 80vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .cyan-box {
+            width: 60px;
+            height: 5px;
+            background-color: #00ff99;
+            margin: 20px auto;
+        }
+
+        .concept-section {
+            padding: 100px 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .concept-grid {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            flex-wrap: wrap;
+        }
+
+        .concept-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .concept-text h2 {
+            font-size: 2.5rem;
+            color: #00ff99;
+            margin-bottom: 20px;
+        }
+
+        .concept-text p {
+            line-height: 2;
+            color: #ccc;
+            font-size: 1.1rem;
+        }
+
+        .concept-image {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .concept-image img {
+            width: 100%;
+            border-radius: 12px;
+            border: 1px solid #333;
+            box-shadow: 0 0 20px rgba(0, 255, 153, 0.2);
+        }
+
+        .cta-banner {
+            background-color: #1a1a1a;
+            padding: 80px 20px;
+            text-align: center;
+            border-top: 1px solid #333;
+        }
+
+        .cta-banner h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        footer {
+            padding: 40px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #555;
+            border-top: 1px solid #222;
+        }
+    </style>
 </head>
 <body>
+
     <header>
         <div class="logo">CRESTA-AUTO</div>
         <nav>
@@ -14,20 +127,46 @@
                 <li><a href="index.html" class="active">ホーム</a></li>
                 <li><a href="cars.html">車両一覧</a></li>
                 <li><a href="news.html">お知らせ</a></li>
-                </ul>
+            </ul>
         </nav>
-<a href="https://docs.google.com/forms/d/1zPGI6HD4iRVSvvlWbTxiSdbSgxjjRqCrUDru-jT1QO8/viewform" class="btn-booking">予約する</a>
+        <a href="https://docs.google.com/forms/d/1zPGI6HD4iRVSvvlWbTxiSdbSgxjjRqCrUDru-jT1QO8/viewform" class="btn-booking" target="_blank">予約する</a>
     </header>
 
     <main>
-        <section id="hero" class="jimdo-style-hero">
-            <div class="hero-content">
+        <section id="hero">
+            <div class="hero-content fade-in delay-1">
                 <h1>ようこそ<br>CRESTA-AUTOへ</h1>
-                <div class="cyan-box"></div> <a href="cars.html" class="btn-main">車両を見る</a>
+                <div class="cyan-box"></div>
+                <p style="margin-bottom: 30px; color: #aaa;">Car Parking Original Car Shop</p>
+                <a href="cars.html" class="btn-main">車両を見る</a>
             </div>
-            <div class="scroll-down">▼</div>
+            <div class="scroll-down fade-in delay-1">▼</div>
         </section>
-        
-        </main>
+
+        <section class="concept-section fade-in delay-2">
+            <div class="concept-grid">
+                <div class="concept-text">
+                    <h2>イタリアの<br>自動車ブランド</h2>
+                    <p>
+                        私達CRESTAは、2024年4月1日に創業したメーカーです。
+                    </p>
+                </div>
+                <div class="concept-image">
+                    <img src="https://lh3.googleusercontent.com/d/1fuHpv5A8mRXWmYR3SW5eBVgYP-SklU26" alt="icon">
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-banner fade-in delay-3">
+            <h2>INFORMATION</h2>
+            <p style="color: #888; margin-bottom: 30px;">イベント告知や新情報</p>
+            <a href="news.html" class="btn-main" style="background: transparent; border: 1px solid #00ff99; color: #00ff99;">お知らせを見る</a>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 CRESTA-AUTO</p>
+    </footer>
+
 </body>
 </html>
