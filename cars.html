@@ -26,8 +26,8 @@
 
     <script>
         // --- 設定エリア ---
-        // 先ほどGASで取得した「ウェブアプリのURL」をここに貼り付けます
-        const GAS_API_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AWDtjMUGFzoNDQBdlEiwzpEMxMzWPKJJ1TAwecU2BF9GANjxPjpeiKt4mn6ChBnnWnxZqOoOSQWRqwdnr-DnmJaAb1FsUMgO4YwjLS1rHJdnwVLTYWzELhcNDDGIazf4BbXvcSYOjdsoSAGO6wnrYySc28PNJsVKm_HAqYDoVBrWpNCLQ7D-fasHG4LrHEqTM2NpiZRPRBGXF3h4gvA0tJGEtaSsKTe-pJXOq0J9HPtN3i2Y_L5kBuKg85LUW_WwKBxxSGw2t_mHvSMAd9qpSmjStU2w5hiyrg&lib=Mfv7jgToyOYTbYLEz2rRpj39V_KNzP8-N"; 
+        // デプロイしたウェブアプリのURL（末尾が /exec のもの）を使用してください
+        const GAS_API_URL = "https://script.google.com/macros/s/ここにあなたのID/exec"; 
         // ------------------
 
         async function fetchCars() {
@@ -35,7 +35,6 @@
                 const response = await fetch(GAS_API_URL);
                 if (!response.ok) throw new Error("データの取得に失敗しました");
                 const cars = await response.json();
-                
                 renderCars(cars);
             } catch (error) {
                 console.error(error);
@@ -45,35 +44,32 @@
 
         function renderCars(cars) {
             const container = document.getElementById('car-list-container');
-            container.innerHTML = ''; // ローディングメッセージを消す
+            container.innerHTML = ''; 
             
             cars.forEach(car => {
-                // ドライブの画像IDを直リンクURLに変換
-                const imageUrl = `https://lh3.googleusercontent.com/u/0/d/${car.画像ID}`;
+                // 画像IDを直リンクに変換（スプレッドシートの「画像ID」列を使用）
+                const imageUrl = car.画像ID ? `https://lh3.googleusercontent.com/d/${car.画像ID}` : "https://via.placeholder.com/400x250?text=No+Image";
                 
-                // 販売状況に応じたスタイルと「買う」ボタンの出し分け
                 let statusHtml = '';
                 let buyButtonHtml = '';
                 
+                // スプレッドシートの「販売状況」列を参照
                 if (car.販売状況 === '販売中') {
                     statusHtml = `<span class="car-status status-onsale">【販売中】</span>`;
+                    // GAS側で追加した共通の「購入リンク」を使用
                     buyButtonHtml = `<a href="${car.購入リンク}" class="btn-buy" target="_blank">買う</a>`;
                 } else if (car.販売状況 === '販売終了') {
                     statusHtml = `<span class="car-status status-sold">【販売終了】</span>`;
                     buyButtonHtml = `<span class="btn-buy disabled">売約済</span>`;
-                } else {
-                    // 空欄などは表示しない
-                    statusHtml = '';
-                    buyButtonHtml = '';
                 }
 
                 const carCardHtml = `
                     <div class="car-card">
-                        <img src="${imageUrl}" alt="${car.車両名}" class="car-image">
+                        <img src="${imageUrl}" alt="${car.車名}" class="car-image">
                         <div class="car-details">
-                            <h2 class="car-name">${car.車両名}</h2>
-                            <p class="car-desc">${car.説明}</p>
-                            <p class="car-spec">${car.備考}</p>
+                            <h2 class="car-name">${car.車名}</h2>
+                            <p class="car-price">価格: ${car.価格}</p>
+                            <p class="car-spec" style="white-space: pre-wrap;">${car.備考}</p>
                             <div class="purchase-area">
                                 ${statusHtml}<br>
                                 ${buyButtonHtml}
@@ -86,7 +82,6 @@
             });
         }
 
-        // ページ読み込み時に実行
         fetchCars();
     </script>
 </body>
