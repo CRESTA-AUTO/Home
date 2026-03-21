@@ -116,6 +116,85 @@
             color: #555;
             border-top: 1px solid #222;
         }
+
+/* --- 魔法のレスポンシブ・ポン付けコード --- */
+@media screen and (max-width: 768px) {
+    /* 1. ヘッダー：重なりを防ぐために縦に並べる */
+    header {
+        padding: 10px !important;
+        flex-direction: column !important;
+        height: auto !important;
+        gap: 10px !important;
+    }
+
+    nav ul {
+        justify-content: center !important;
+        gap: 15px !important;
+        padding: 0 !important;
+    }
+
+    nav a {
+        font-size: 14px !important;
+        padding-bottom: 5px !important;
+    }
+
+    /* 予約ボタンをスマホで見やすく */
+    .btn-booking {
+        width: 100% !important;
+        text-align: center !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 2. 車両一覧：カードを縦並びに強制変更 */
+    .car-card {
+        flex-direction: column !important; /* 横並びから縦並びへ */
+        width: 95% !important;
+        max-width: 400px !important;
+        height: auto !important;
+        margin: 10px auto !important;
+        padding: 15px !important;
+        align-items: center !important;
+    }
+
+    .car-image {
+        width: 100% !important;
+        height: auto !important;
+        margin: 0 0 15px 0 !important; /* 右余白を消して下に余白 */
+    }
+
+    .car-details {
+        width: 100% !important;
+        text-align: center !important;
+        align-items: center !important;
+    }
+
+    /* 文字のはみ出しを防止 */
+    .car-name {
+        max-width: 100% !important;
+        white-space: normal !important; /* 折り返しを許可 */
+        font-size: 1.2rem !important;
+    }
+
+    .car-spec {
+        text-align: left !important; /* スペックは左寄せが読みやすい */
+        font-size: 13px !important;
+        width: 100% !important;
+    }
+
+    /* 3. コントロールボタンの調整 */
+    .controls {
+        flex-direction: column !important;
+        gap: 10px !important;
+        margin: 10px !important;
+    }
+    
+    .controls-group {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+    }
+}
+        
     </style>
 </head>
 <body>
