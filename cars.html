@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>車両一覧 - CRESTA_AUTO</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">CRESTA_AUTO</div>
+        <nav>
+            <ul>
+                <li><a href="index.html">ホーム</a></li>
+                <li><a href="cars.html" class="active">車両一覧</a></li>
+            </ul>
+        </nav>
+        <a href="#booking" class="btn-booking">予約する</a>
+    </header>
+
+    <main>
+        <div id="car-list-container">
+            <p id="loading-message">車両データを読み込み中です...</p>
+        </div>
+    </main>
+
+    <script>
+        // --- 設定エリア ---
+        // 先ほどGASで取得した「ウェブアプリのURL」をここに貼り付けます
+        const GAS_API_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AWDtjMUGFzoNDQBdlEiwzpEMxMzWPKJJ1TAwecU2BF9GANjxPjpeiKt4mn6ChBnnWnxZqOoOSQWRqwdnr-DnmJaAb1FsUMgO4YwjLS1rHJdnwVLTYWzELhcNDDGIazf4BbXvcSYOjdsoSAGO6wnrYySc28PNJsVKm_HAqYDoVBrWpNCLQ7D-fasHG4LrHEqTM2NpiZRPRBGXF3h4gvA0tJGEtaSsKTe-pJXOq0J9HPtN3i2Y_L5kBuKg85LUW_WwKBxxSGw2t_mHvSMAd9qpSmjStU2w5hiyrg&lib=Mfv7jgToyOYTbYLEz2rRpj39V_KNzP8-N"; 
+        // ------------------
+
+        async function fetchCars() {
+            try {
+                const response = await fetch(GAS_API_URL);
+                if (!response.ok) throw new Error("データの取得に失敗しました");
+                const cars = await response.json();
+                
+                renderCars(cars);
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loading-message').innerText = "エラー：車両データを読み込めませんでした。";
+            }
+        }
+
+        function renderCars(cars) {
+            const container = document.getElementById('car-list-container');
+            container.innerHTML = ''; // ローディングメッセージを消す
+            
+            cars.forEach(car => {
+                // ドライブの画像IDを直リンクURLに変換
+                const imageUrl = `https://lh3.googleusercontent.com/u/0/d/${car.画像ID}`;
+                
+                // 販売状況に応じたスタイルと「買う」ボタンの出し分け
+                let statusHtml = '';
+                let buyButtonHtml = '';
+                
+                if (car.販売状況 === '販売中') {
+                    statusHtml = `<span class="car-status status-onsale">【販売中】</span>`;
+                    buyButtonHtml = `<a href="${car.購入リンク}" class="btn-buy" target="_blank">買う</a>`;
+                } else if (car.販売状況 === '販売終了') {
+                    statusHtml = `<span class="car-status status-sold">【販売終了】</span>`;
+                    buyButtonHtml = `<span class="btn-buy disabled">売約済</span>`;
+                } else {
+                    // 空欄などは表示しない
+                    statusHtml = '';
+                    buyButtonHtml = '';
+                }
+
+                const carCardHtml = `
+                    <div class="car-card">
+                        <img src="${imageUrl}" alt="${car.車両名}" class="car-image">
+                        <div class="car-details">
+                            <h2 class="car-name">${car.車両名}</h2>
+                            <p class="car-desc">${car.説明}</p>
+                            <p class="car-spec">${car.備考}</p>
+                            <div class="purchase-area">
+                                ${statusHtml}<br>
+                                ${buyButtonHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                container.innerHTML += carCardHtml;
+            });
+        }
+
+        // ページ読み込み時に実行
+        fetchCars();
+    </script>
+</body>
+</html>
