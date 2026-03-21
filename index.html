@@ -31,8 +31,19 @@
         .delay-img { animation-delay: 1.0s; }
 
         /* --- 追加のホーム専用スタイル --- */
+<section id="hero">
+    <div class="hero-bg"></div> <div class="hero-content fade-in delay-1">
+        <h1>ようこそ<br>CRESTA-AUTOへ</h1>
+        <div class="cyan-box"></div>
+        <p style="margin-bottom: 30px; color: #aaa;">Car Parking Original Car Shop</p>
+        <a href="cars.html" class="btn-main">車両を見る</a>
+    </div>
+    <div class="scroll-down fade-in delay-1">▼</div>
+</section>
+
+<style>
+/* --- 修正版：背景フェード用スタイル --- */
 #hero {
-    /* スマホでの高さ不足を防ぐため、最低限の高さ(px)を指定 */
     height: 80vh;
     min-height: 500px; 
     display: flex;
@@ -41,48 +52,35 @@
     text-align: center;
     position: relative;
     overflow: hidden;
-    background: #000;
+    background: #000; /* 画像が出る前は真っ黒 */
 }
 
-/* 背景画像専用のレイヤー */
-#hero::before {
-    content: "";
+/* 擬似要素(::before)をやめて、直接のクラスに変更 */
+.hero-bg {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    /* スマホでも確実に読み込めるよう、背景画像を再指定 */
+    /* 背景画像を確実に指定 */
     background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
                       url('https://lh3.googleusercontent.com/u/0/d/1_tVPXHm7yXAAd2RhBuBb5yv9HYkSxuy-');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    z-index: 0;
+    z-index: 1; /* コンテンツの下 */
     
-    /* アニメーション設定 */
+    /* スマホでも確実に動かすための設定 */
     opacity: 0;
-    /* 待ち時間を 0.5s に少し短縮して、スマホでの「真っ黒時間」を減らす */
-    animation: heroFade 1.0s ease-in-out 0.5s forwards;
+    animation: heroFade 1.5s ease-in-out 0.8s forwards; /* 0.8s待ってから開始 */
+    will-change: opacity, transform; /* ブラウザに「動くぞ」と予告して加速させる */
 }
 
 /* 文字コンテンツ */
 .hero-content {
     position: relative;
-    z-index: 2; /* 確実に一番上に */
-    width: 90%; /* スマホで文字が端に寄りすぎないよう調整 */
-}
-
-/* 魔法のレスポンシブ（スマホ用微調整） */
-@media screen and (max-width: 768px) {
-    #hero {
-        height: 60vh; /* スマホでは少し高さを抑えるとバランスが良い */
-        min-height: 400px;
-    }
-    
-    .hero-content h1 {
-        font-size: 2rem !important; /* スマホでは文字を小さくして一行に収める */
-    }
+    z-index: 2; /* 背景より上に配置 */
+    width: 90%;
 }
 
 @keyframes heroFade {
@@ -95,6 +93,23 @@
         transform: scale(1); 
     }
 }
+
+/* ヘッダーは常に最前面 */
+header {
+    z-index: 100 !important;
+}
+
+/* 魔法のレスポンシブ */
+@media screen and (max-width: 768px) {
+    #hero {
+        height: 70vh; /* スマホで見やすい高さに微調整 */
+        min-height: 400px;
+    }
+    .hero-content h1 {
+        font-size: 2rem !important;
+    }
+}
+</style>
         .hero-content h1 {
             font-size: 3.5rem;
             margin-bottom: 10px;
