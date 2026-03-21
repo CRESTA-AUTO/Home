@@ -82,45 +82,45 @@
         </div>
     </main>
 
-    <script>
-        // デプロイしたGASのURL（末尾が /exec のもの）
-        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzCohegTqgSW7R5t8Oxr_eFw7bB4zjNEVW4vy3vNYFDsGCiWJnBeMtHXAQOqEEasoZt/exec"; 
+<script>
+    // デプロイしたGASのURL
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzCohegTqgSW7R5t8Oxr_eFw7bB4zjNEVW4vy3vNYFDsGCiWJnBeMtHXAQOqEEasoZt/exec"; 
 
-        async function fetchNews() {
-            const container = document.getElementById('news-list-container');
-            try {
-                // Code.gs内の doGet(e) で分岐させるために ?action=getNews を付与
-                const response = await fetch(`${GAS_API_URL}?action=getNews`);
-                const newsData = await response.json();
-                
-                if (!newsData || newsData.length === 0) {
-                    container.innerHTML = '<p class="loading-message">現在お知らせはありません。</p>';
-                    return;
-                }
-
-                container.innerHTML = '';
-
-                // Code.gsの getNewsData() が返している英単語のキーを使用
-                newsData.forEach(item => {
-                    const card = `
-                        <article class="news-card">
-                            <div class="news-header">
-                                <h2 class="news-title">${item.title || '無題のお知らせ'}</h2>
-                                <time class="news-date">${item.date || ''}</time>
-                            </div>
-                            <div class="news-content">${item.content || ''}</div>
-                        </article>
-                    `;
-                    container.innerHTML += card;
-                });
-
-            } catch (error) {
-                console.error("Fetch error:", error);
-                document.getElementById('loading-message').innerText = "お知らせの読み込みに失敗しました。";
+    async function fetchNews() {
+        const container = document.getElementById('news-list-container');
+        try {
+            // ★ポイント：?action=getNews を付けて、GASの getNewsData() を呼び出す
+            const response = await fetch(`${GAS_API_URL}?action=getNews`);
+            const newsData = await response.json();
+            
+            if (!newsData || newsData.length === 0) {
+                container.innerHTML = '<p class="loading-message">現在お知らせはありません。</p>';
+                return;
             }
-        }
 
-        fetchNews();
-    </script>
+            container.innerHTML = '';
+
+            // ★ポイント：GASの getNewsData で定義されている英語のキー（date, title, content）を使う
+            newsData.forEach(item => {
+                const card = `
+                    <article class="news-card">
+                        <div class="news-header">
+                            <h2 class="news-title">${item.title || '無題のお知らせ'}</h2>
+                            <time class="news-date">${item.date || ''}</time>
+                        </div>
+                        <div class="news-content">${item.content || ''}</div>
+                    </article>
+                `;
+                container.innerHTML += card;
+            });
+
+        } catch (error) {
+            console.error("Fetch error:", error);
+            document.getElementById('loading-message').innerText = "お知らせの読み込みに失敗しました。";
+        }
+    }
+
+    fetchNews();
+</script>
 </body>
 </html>
