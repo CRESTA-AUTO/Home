@@ -5,6 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>車両一覧 - CRESTA-AUTO</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* CSSが読み込めない場合でも最低限綺麗に見えるように追加 */
+        #car-list-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+            justify-content: center;
+        }
+
+        .controls {
+            background-color: #f4f4f4;
+            padding: 15px;
+            margin: 20px;
+            border-radius: 8px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .controls-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .controls button {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .controls button.active {
+            background: #333;
+            color: white;
+        }
+
+        /* 価格のCR部分の装飾 */
+        .currency-label {
+            font-weight: bold;
+            margin-left: 4px;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -19,64 +66,122 @@
     </header>
 
     <main>
+        <div class="controls">
+            <div class="controls-group">
+                <label>絞り込み:</label>
+                <button id="filter-all" class="active" onclick="updateFilter('all')">すべて</button>
+                <button id="filter-onsale" onclick="updateFilter('onsale')">販売中のみ</button>
+            </div>
+            <div class="controls-group">
+                <label>並べ替え:</label>
+                <button id="sort-new" class="active" onclick="updateSort('new')">新しい順</button>
+                <button id="sort-old" onclick="updateSort('old')">古い順</button>
+                <button id="sort-high" onclick="updateSort('high')">価格が高い順</button>
+                <button id="sort-low" onclick="updateSort('low')">価格が低い順</button>
+            </div>
+        </div>
+
         <div id="car-list-container">
             <p id="loading-message">車両データを読み込み中です...</p>
         </div>
     </main>
 
     <script>
-        // --- 設定エリア ---
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzCohegTqgSW7R5t8Oxr_eFw7bB4zjNEVW4vy3vNYFDsGCiWJnBeMtHXAQOqEEasoZt/exec"; 
-        // ------------------
+        
+        let allCars = [];
+        let currentSort = 'new';
+        let currentFilter = 'all';
 
         async function fetchCars() {
             try {
                 const response = await fetch(GAS_API_URL);
-                if (!response.ok) throw new Error("データの取得に失敗しました");
                 const cars = await response.json();
-                renderCars(cars);
+                
+                // データを加工して保存
+                allCars = cars.map((car, index) => ({
+                    ...car,
+                    index: index, // 元の並び順を保存
+                    numericPrice: parseInt(String(car.価格).replace(/[^0-9]/g, '')) || 0 // 価格を数値化
+                }));
+
+                displayContent();
             } catch (error) {
                 console.error(error);
-                document.getElementById('loading-message').innerText = "エラー：車両データを読み込めませんでした。";
+                document.getElementById('loading-message').innerText = "データの読み込みに失敗しました。";
             }
         }
 
-        function renderCars(cars) {
-            const container = document.getElementById('car-list-container');
-            container.innerHTML = ''; 
+        // 画像URLをどんな形式でも表示可能なものに変換する工夫
+        function getSafeImageUrl(url) {
+            if (!url) return "https://placehold.jp/24/cccccc/ffffff/400x250.png?text=No%20Image";
             
-            cars.forEach(car => {
-                // 【修正ポイント】スプレッドシートの「画像URL」列をそのまま使用する
-                // キー名が「画像URL」であることを確認してください。GASの書き出しに合わせます。
-                const imageUrl = car.画像URL || "https://via.placeholder.com/400x250?text=No+Image";
-                
-                let statusHtml = '';
-                let buyButtonHtml = '';
-                
-                if (car.販売状況 === '販売中') {
-                    statusHtml = `<span class="car-status status-onsale">【販売中】</span>`;
-                    buyButtonHtml = `<a href="${car.購入リンク}" class="btn-buy" target="_blank">買う</a>`;
-                } else if (car.販売状況 === '販売終了') {
-                    statusHtml = `<span class="car-status status-sold">【販売終了】</span>`;
-                    buyButtonHtml = `<span class="btn-buy disabled">購入不可</span>`;
-                }
+            // GoogleドライブのIDを抽出
+            const driveIdMatch = url.match(/[-\w]{25,}/);
+            if (driveIdMatch) {
+                // プレビュー画面ではなく、直接画像データを取得するURLに強制変換
+                return `https://lh3.googleusercontent.com/d/${driveIdMatch[0]}`;
+            }
+            return url; // ドライブ以外ならそのまま
+        }
 
-                const carCardHtml = `
-                    <div class="car-card">
-                        <img src="${imageUrl}" alt="${car.車名}" class="car-image">
+        function updateSort(type) {
+            currentSort = type;
+            displayContent();
+        }
+
+        function updateFilter(type) {
+            currentFilter = type;
+            displayContent();
+        }
+
+        function displayContent() {
+            const container = document.getElementById('car-list-container');
+            container.innerHTML = '';
+
+            // ボタンの状態を更新
+            document.querySelectorAll('.controls button').forEach(b => b.classList.remove('active'));
+            document.getElementById(`sort-${currentSort}`).classList.add('active');
+            document.getElementById(`filter-${currentFilter}`).classList.add('active');
+
+            let cars = [...allCars];
+
+            // 1. 絞り込み
+            if (currentFilter === 'onsale') {
+                cars = cars.filter(c => c.販売状況 === '販売中');
+            }
+
+            // 2. 並べ替え
+            if (currentSort === 'new') cars.sort((a, b) => b.index - a.index);
+            if (currentSort === 'old') cars.sort((a, b) => a.index - b.index);
+            if (currentSort === 'high') cars.sort((a, b) => b.numericPrice - a.numericPrice);
+            if (currentSort === 'low') cars.sort((a, b) => a.numericPrice - b.numericPrice);
+
+            // 3. 描画
+            cars.forEach(car => {
+                const safeImg = getSafeImageUrl(car.画像URL || car.画像ID);
+                const isSold = car.販売状況 === '販売終了';
+                
+                const card = `
+                    <div class="car-card" style="${isSold ? 'opacity: 0.7; filter: grayscale(0.5);' : ''}">
+                        <img src="${safeImg}" alt="${car.車名}" class="car-image" onerror="this.src='https://placehold.jp/24/cccccc/ffffff/400x250.png?text=Image%20Error'">
                         <div class="car-details">
                             <h2 class="car-name">${car.車名}</h2>
-                            <p class="car-price">価格: ${car.価格}</p>
-                            <p class="car-spec" style="white-space: pre-wrap;">${car.備考}</p>
+                            <p class="car-price">価格: ${car.価格}<span class="currency-label">CR</span></p>
+                            <p class="car-spec">${car.備考 === 'あ' ? '' : car.備考}</p>
                             <div class="purchase-area">
-                                ${statusHtml}<br>
-                                ${buyButtonHtml}
+                                <span class="car-status ${isSold ? 'status-sold' : 'status-onsale'}">
+                                    【${car.販売状況}】
+                                </span><br>
+                                ${isSold ? 
+                                    '<span class="btn-buy disabled">購入不可</span>' : 
+                                    `<a href="${car.購入リンク}" class="btn-buy" target="_blank">買う</a>`
+                                }
                             </div>
                         </div>
                     </div>
                 `;
-                
-                container.innerHTML += carCardHtml;
+                container.innerHTML += card;
             });
         }
 
