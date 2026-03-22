@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GALLERY - CRESTA-AUTO</title>
     <style>
-        /* --- 全体の設定 --- */
+        /* --- 車両一覧のベースデザインを完全継承 --- */
         body {
             background-color: #121212;
             color: #eeeeee;
@@ -13,29 +13,28 @@
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         }
 
-        /* --- ヘッダー（車両一覧のデザインを完全移植） --- */
+        /* --- ヘッダー（バー）：車両一覧の数値を完全移植 --- */
         header {
             background-color: #1a1a1a;
             border-bottom: 1px solid #333;
-            padding: 15px 20px;
+            padding: 10px 50px; /* 車両一覧と同じ余白 */
             display: flex;
-            flex-direction: column; /* 縦に並べて中央へ */
-            align-items: center;    /* 全要素を中央寄せ */
-            gap: 15px;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
         }
 
         .logo {
             color: #ffffff;
             font-weight: bold;
-            font-size: 1.8rem;
-            letter-spacing: 2px;
+            font-size: 1.5rem; /* 車両一覧と同じサイズ */
             text-decoration: none;
         }
 
         nav ul {
             list-style: none;
             display: flex;
-            gap: 25px;
+            gap: 20px; /* 車両一覧の構成に合わせる */
             padding: 0;
             margin: 0;
         }
@@ -44,7 +43,7 @@
             color: #cccccc;
             text-decoration: none;
             transition: 0.3s;
-            font-size: 15px;
+            font-size: 14px; /* 車両一覧に合わせる */
         }
 
         nav a:hover, nav a.active {
@@ -52,15 +51,17 @@
             border-bottom: 2px solid #00ff99;
         }
 
+        /* 予約ボタン：車両一覧と全く同じスタイル */
         .btn-booking {
             background-color: transparent;
             color: #00ff99;
             border: 1px solid #00ff99;
-            padding: 8px 30px;
+            padding: 8px 15px; /* 車両一覧の 8px 15px を維持 */
             text-decoration: none;
             border-radius: 4px;
             transition: 0.3s;
-            font-weight: bold;
+            font-size: 14px;
+            display: inline-block;
         }
 
         .btn-booking:hover {
@@ -68,7 +69,7 @@
             color: #000;
         }
 
-        /* --- ギャラリーコンテンツ --- */
+        /* --- ギャラリー用コンテンツ設定 --- */
         .container {
             max-width: 1200px;
             margin: 40px auto;
@@ -100,9 +101,8 @@
         }
 
         .gallery-card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-5px);
             border-color: #00ff99;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
 
         .image-box {
@@ -116,11 +116,6 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: 0.5s;
-        }
-
-        .gallery-card:hover .image-box img {
-            transform: scale(1.1);
         }
 
         .info-box {
@@ -138,41 +133,39 @@
             font-size: 0.9rem;
             color: #aaa;
             line-height: 1.6;
-            margin: 0;
         }
 
         #loading-message {
             text-align: center;
             color: #00ff99;
             padding: 50px;
-            font-size: 1.1rem;
         }
 
-        /* --- 魔法のレスポンシブ（スマホ用） --- */
+        /* --- 魔法のレスポンシブ：車両一覧の挙動を完全移植 --- */
         @media screen and (max-width: 768px) {
             header {
-                padding: 15px 10px !important;
-                gap: 12px !important;
-            }
-
-            .logo {
-                font-size: 1.5rem !important;
+                padding: 10px !important;
+                flex-direction: column !important;
+                height: auto !important;
+                gap: 10px !important;
             }
 
             nav ul {
-                gap: 12px !important;
-                flex-wrap: wrap;
                 justify-content: center !important;
+                gap: 15px !important;
+                padding: 0 !important;
             }
 
             nav a {
-                font-size: 13px !important;
+                font-size: 14px !important;
+                padding-bottom: 5px !important;
             }
 
+            /* 予約ボタン：車両一覧の「width: 100%」設定を完全一致 */
             .btn-booking {
-                width: 80% !important;
+                width: 100% !important;
                 text-align: center !important;
-                padding: 10px 0 !important;
+                box-sizing: border-box !important;
             }
 
             .gallery-grid {
@@ -184,7 +177,7 @@
 <body>
 
     <header>
-        <div class="logo">CRESTA-AUTO</div>
+        <a href="index.html" class="logo">CRESTA-AUTO</a>
         <nav>
             <ul>
                 <li><a href="index.html">ホーム</a></li>
