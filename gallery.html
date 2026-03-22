@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GALLERY - CRESTA-AUTO</title>
+    <style>
+        /* --- 全体設定 (ベース継承) --- */
+        body {
+            background-color: #121212;
+            color: #eeeeee;
+            margin: 0;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        header {
+            background-color: #1a1a1a;
+            border-bottom: 1px solid #333;
+            padding: 10px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo { color: #ffffff; font-weight: bold; font-size: 1.5rem; }
+
+        nav ul { list-style: none; display: flex; gap: 20px; padding: 0; }
+        nav a { color: #cccccc; text-decoration: none; transition: 0.3s; }
+        nav a:hover, nav a.active { color: #00ff99; }
+
+        /* --- ギャラリーレイアウト --- */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 40px;
+            letter-spacing: 4px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 20px;
+        }
+
+        /* グリッドレイアウト：3列（スマホは1列） */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .gallery-card {
+            background-color: #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #333;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .gallery-card:hover {
+            transform: translateY(-8px);
+            border-color: #00ff99;
+        }
+
+        .image-box {
+            width: 100%;
+            height: 200px;
+            background-color: #000;
+            overflow: hidden;
+        }
+
+        .image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 画像を枠いっぱいに埋める */
+            transition: 0.5s;
+        }
+
+        .gallery-card:hover .image-box img {
+            transform: scale(1.1);
+        }
+
+        .info-box {
+            padding: 20px;
+        }
+
+        .info-title {
+            font-size: 1.3rem;
+            color: #ffffff;
+            margin: 0 0 10px 0;
+            font-weight: bold;
+        }
+
+        .info-desc {
+            font-size: 0.9rem;
+            color: #aaa;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        #loading-message {
+            text-align: center;
+            color: #00ff99;
+            padding: 50px;
+        }
+
+        /* スマホ対応 */
+        @media screen and (max-width: 768px) {
+            header { padding: 10px; flex-direction: column; }
+            .gallery-grid { grid-template-columns: 1fr; }
+            .image-box { height: 180px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">CRESTA-AUTO</div>
+        <nav>
+            <ul>
+                <li><a href="index.html">ホーム</a></li>
+                <li><a href="cars.html">車両一覧</a></li>
+                <li><a href="gallery.html" class="active">ギャラリー</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h1 class="page-title">PHOTO GALLERY</h1>
+        
+        <div id="loading-message">Loading Assets...</div>
+        <div id="gallery-container" class="gallery-grid"></div>
+    </main>
+
+    <script>
+        // あなたのGASのURLに差し替えてください
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzCohegTqgSW7R5t8Oxr_eFw7bB4zjNEVW4vy3vNYFDsGCiWJnBeMtHXAQOqEEasoZt/exec";
+
+        async function loadGallery() {
+            try {
+                const response = await fetch(GAS_API_URL);
+                const data = await response.json();
+                
+                const container = document.getElementById('gallery-container');
+                const loading = document.getElementById('loading-message');
+                loading.style.display = 'none';
+
+                if (!data || data.length === 0) {
+                    loading.innerText = "No data available.";
+                    loading.style.display = 'block';
+                    return;
+                }
+
+                data.forEach(item => {
+                    // IDがないものは飛ばす
+                    if (!item.id) return;
+
+                    const card = document.createElement('div');
+                    card.className = 'gallery-card';
+
+                    // 画像URLが空の場合はプレースホルダーを表示
+                    const imgUrl = item.url || "https://placehold.jp/24/333333/ffffff/400x250.png?text=No%20Image";
+
+                    card.innerHTML = `
+                        <div class="image-box">
+                            <img src="${imgUrl}" alt="${item.title}" onerror="this.src='https://placehold.jp/24/333333/ffffff/400x250.png?text=Image%20Error'">
+                        </div>
+                        <div class="info-box">
+                            <h2 class="info-title">${item.title || 'Untitled'}</h2>
+                            <p class="info-desc">${item.description || ''}</p>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loading-message').innerText = "Failed to load gallery.";
+            }
+        }
+
+        window.onload = loadGallery;
+    </script>
+</body>
+</html>
