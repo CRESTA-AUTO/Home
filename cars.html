@@ -304,8 +304,8 @@ nav a:hover, nav a.active {
         <div class="controls">
             <div class="controls-group">
                 <label>絞り込み:</label>
-                <button id="filter-all" class="active" onclick="updateFilter('all')">すべて</button>
-                <button id="filter-onsale" onclick="updateFilter('onsale')">販売中のみ</button>
+                <button id="filter-all" onclick="updateFilter('all')">すべて</button>
+                <button id="filter-onsale" class="active" onclick="updateFilter('onsale')">販売中のみ</button>
             </div>
             <div class="controls-group">
                 <label>並べ替え:</label>
@@ -317,7 +317,7 @@ nav a:hover, nav a.active {
         </div>
 
         <div id="car-list-container">
-            <p id="loading-message">車両データを読み込み中です...</p>
+            <p id="loading-message">データを読み込み中です...</p>
         </div>
     </main>
 
