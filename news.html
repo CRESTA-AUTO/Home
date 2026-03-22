@@ -169,7 +169,7 @@
     async function fetchNews() {
         const container = document.getElementById('news-list-container');
         try {
-            // ★ポイント：?action=getNews を付けて、GASの getNewsData() を呼び出す
+            // ★ポイントみ：?action=getNews を付けて、GASの getNewsData() を呼び出す
             const response = await fetch(`${GAS_API_URL}?action=getNews`);
             const newsData = await response.json();
             
